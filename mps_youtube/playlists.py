@@ -1,6 +1,7 @@
 import os
 import sys
 import pickle
+import codecs
 
 from . import g, c, screen, util
 from .playlist import Playlist, Video
@@ -10,7 +11,7 @@ from pafy.backend_shared import extract_video_id
 def save():
     """ Save playlists.  Called each time a playlist is saved or deleted. """
     for pl in g.userpl:
-        with open(os.path.join(g.PLFOLDER, pl+'.m3u'), 'w') as plf:
+        with codecs.open(os.path.join(g.PLFOLDER, pl+'.m3u'), 'w', 'utf-8') as plf:
             plf.write('#EXTM3U\n\n')
             for song in g.userpl[pl].songs:
                 plf.write('#EXTINF:%d,%s\n' % (song.length, song.title))
@@ -55,7 +56,7 @@ def delete(name):
     """ Delete playlist, including m3u file. """
     del g.userpl[name]
     os.remove(os.path.join(g.PLFOLDER, name + '.m3u'))
-    
+
 
 def read_m3u(m3u):
     """ Processes an m3u file into a Playlist object. """
@@ -63,7 +64,7 @@ def read_m3u(m3u):
     songs = []
     expect_ytid = False
 
-    with open(m3u, 'r') as plf:
+    with codecs.open(m3u, 'r', 'utf-8') as plf:
         if plf.readline().startswith('#EXTM3U'):
             for line in plf:
                 if line.startswith('#EXTINF:') and not expect_ytid:
@@ -130,7 +131,7 @@ def _convert_playlist_to_v2():
 
 
 def _convert_playlist_to_m3u():
-    """ Convert playlist_v2 file to the m3u format. 
+    """ Convert playlist_v2 file to the m3u format.
         This should create a .m3u playlist for each playlist in playlist_v2. """
     # Skip if playlists folder exists
     if os.path.isdir(g.PLFOLDER):
@@ -140,7 +141,7 @@ def _convert_playlist_to_m3u():
     elif not os.path.isfile(g.PLFILE):
         return
 
-    try: 
+    try:
         with open(g.PLFILE, 'rb') as plf:
             old_playlists = pickle.load(plf)
 

@@ -1,5 +1,6 @@
 import os
 import pickle
+import codecs
 
 from . import g, c
 from .util import dbg
@@ -32,7 +33,7 @@ def load():
 
 def save():
     """ Save history.  Called each time history is updated. """
-    with open(g.HISTFILE, 'w') as hf:
+    with codecs.open(g.HISTFILE, 'w', 'utf-8') as hf:
         hf.write('#EXTM3U\n\n')
         if 'history' in g.userhist:
             for song in g.userhist['history'].songs:
